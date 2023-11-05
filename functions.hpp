@@ -17,8 +17,8 @@
  * 
  */
 
-#ifndef     ALGORITHMS
-#define     ALGORITHMS
+#ifndef     FUNCTIONS
+#define     FUNCTIONS
 
 #include    <algorithm>
 
