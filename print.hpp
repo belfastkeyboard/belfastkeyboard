@@ -52,6 +52,7 @@
  * 
  * 
  *      Supports references (not fully tested.)
+ *      Testing for non-default stack, queue, and priority_queue containers.
  * 
  * 
  *      Partial support for pointers:
@@ -155,9 +156,9 @@ private:
     template <typename... T>
     void print(bool sep, std::tuple<T...>& __arg)
     {
-        stream << "[";
+        stream << "(";
         print_tuple(false, __arg);
-        stream << "]";
+        stream << ")";
         if (sep) stream << " ";
     }
     template <size_t I = 0, typename... T>
@@ -235,13 +236,13 @@ private:
     template <typename T>
     void print(bool sep, std::set<T> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -250,13 +251,13 @@ private:
     template <typename T>
     void print(bool sep, std::multiset<T> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -265,13 +266,13 @@ private:
     template <typename T>
     void print(bool sep, std::unordered_set<T> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -280,13 +281,13 @@ private:
     template <typename T>
     void print(bool sep, std::unordered_multiset<T> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -295,7 +296,7 @@ private:
     template <typename T, typename U>
     void print(bool sep, std::map<T, U> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, it->first);
@@ -303,7 +304,7 @@ private:
             print(false, it->second);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -312,7 +313,7 @@ private:
     template <typename T, typename U>
     void print(bool sep, std::multimap<T, U> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, it->first);
@@ -320,7 +321,7 @@ private:
             print(false, it->second);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -329,7 +330,7 @@ private:
     template <typename T, typename U>
     void print(bool sep, std::unordered_map<T, U> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, it->first);
@@ -337,7 +338,7 @@ private:
             print(false, it->second);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
@@ -346,7 +347,7 @@ private:
     template <typename T, typename U>
     void print(bool sep, std::unordered_multimap<T, U> __arg)
     {
-        stream << "[";
+        stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, it->first);
@@ -354,7 +355,7 @@ private:
             print(false, it->second);
             if (std::next(it) != __arg.end()) stream << ", ";
         }
-        stream << "]";
+        stream << "}";
         if (sep) stream << " ";
     }
     #endif
