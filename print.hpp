@@ -19,6 +19,8 @@
  * 
  *      Supports these data-structures/containers:
  * 
+ *          > const char* array
+ *          > char array[]
  *          > std::pair
  *          > std::tuple
  *          > std::array
@@ -77,7 +79,6 @@
  * 
  *      Support for:
  *          > std::bitset
- *          > C-style arrays.
  *          > multidimensional containers
  *          > unions.
  *      
