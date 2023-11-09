@@ -35,6 +35,7 @@
  *          > std::multimap
  *          > std::unordered_map
  *          > std::unordered_multimap
+ *          > std::bitset
  * 
  *          Supported but only default container types have been tested:
  *              > std::stack
@@ -79,9 +80,7 @@
  *      Support for print(&memory_address).
  * 
  *      Support for:
- *          > std::bitset
  *          > multidimensional containers
- *          > unions.
  *      
  * 
  *      Parameter support:
@@ -421,6 +420,15 @@ private:
     {
         print(true, *__arg.lock());
     }
+    #endif
+    // std::bitset<T>
+    #ifdef      _GLIBCXX_BITSET
+    template <size_t T>
+    void print(bool sep, std::bitset<T>& __arg)
+    {
+        stream << __arg.to_string();
+        if (sep) stream << " ";
+    }    
     #endif
 
 public:
