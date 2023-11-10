@@ -1,7 +1,7 @@
 /*      Pythonic print() function
  *      
  *      Simple and concise method of printing to console.
- *      print() is a variadic function, it accepts as many arguments as you want.
+ *      Generic 
  *      Arguments are separated with spaces, a full-stop is placed at the end, and a new line is added.
  *      Use print() with no arguments for a quick newline.
  *      print() the contents of your containers without creating your own loops or other specific access methods.
@@ -39,8 +39,20 @@
  *          > std::variant
  *          > std::optional
  * 
+ *      Multidimensional containers tested and functional:
+ *          
+ *          > std::pair
+ *          > std::tuple
+ *          > std::array
+ *          > std::vector
+ *          > std::list
+ *          > std::deque
+ *          > std::set
+ *          > std::map
  * 
- *          Supported but only default container types have been tested:
+ * 
+ *      Supported but only default container types have been tested:
+ * 
  *              > std::stack
  *              > std::queue
  *              > std::priority_queue
@@ -63,6 +75,15 @@
  * 
  *          Pointer support limited to fundamental types.
  *          Container support to be implemented.
+ *          
+ *              Current container implementation:
+ *
+ *                  > std::array
+ *                  > std::vector
+ *                  > std::list
+ *                  > std::deque
+ *                  > std::set
+ *                  > std::map 
  *
  * 
  *      ***          <---KNOWN ISSUES--->          ***
@@ -77,11 +98,6 @@
  *      Support for print(&memory_address).
  * 
  * 
- *      Support for:
- * 
- *          > multidimensional containers
- *      
- * 
  *      Parameter support:
  *          
  *          Support for Pythonic print() keyword arguments.
@@ -92,8 +108,6 @@
  * 
  *      Improve documentation
  *      
- *      Improve preprocessor directives
- * 
  *      Improve error handling
  * 
  */
@@ -139,7 +153,7 @@ private:
     // std::pair<T, U>
     #ifdef      _GLIBCXX_UTILITY
         template <typename T, typename U>
-        void print(bool sep, std::pair<T, U> __arg)
+        void print(bool sep, std::pair<T, U>& __arg)
         {
             stream << "(";
             print(false, __arg.first);
@@ -172,13 +186,25 @@ private:
     // std::array<T, U>
     #ifdef      _GLIBCXX_ARRAY
     template <typename T, size_t U>
-    void print(bool sep, std::array<T, U> __arg)
+    void print(bool sep, std::array<T, U>& __arg)
     {
         stream << "[";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
+        }
+        stream << "]";
+        if (sep) stream << " ";
+    }
+    template <typename T, size_t U>
+    void print(bool sep, std::array<T, U>* __arg)
+    {
+        stream << "[";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, *it);
+            if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
         if (sep) stream << " ";
@@ -187,13 +213,25 @@ private:
     // std::vector<T>
     #ifdef      _GLIBCXX_VECTOR
     template <typename T>
-    void print(bool sep, std::vector<T> __arg)
+    void print(bool sep, std::vector<T>& __arg)
     {
         stream << "[";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
+        }
+        stream << "]";
+        if (sep) stream << " ";
+    }
+    template <typename T>
+    void print(bool sep, std::vector<T>* __arg)
+    {
+        stream << "[";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, *it);
+            if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
         if (sep) stream << " ";
@@ -202,13 +240,25 @@ private:
     // std::list<T>
     #ifdef      _STL_LIST_H
     template <typename T>
-    void print(bool sep, std::list<T> __arg)
+    void print(bool sep, std::list<T>& __arg)
     {
         stream << "[";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
+        }
+        stream << "]";
+        if (sep) stream << " ";
+    }
+    template <typename T>
+    void print(bool sep, std::list<T>* __arg)
+    {
+        stream << "[";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, *it);
+            if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
         if (sep) stream << " ";
@@ -217,7 +267,7 @@ private:
     // std::deque<T>
     #ifdef      _GLIBCXX_DEQUE
     template <typename T>
-    void print(bool sep, std::deque<T> __arg)
+    void print(bool sep, std::deque<T>& __arg)
     {
         stream << "[";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
@@ -228,17 +278,41 @@ private:
         stream << "]";
         if (sep) stream << " ";
     }
+    template <typename T>
+    void print(bool sep, std::deque<T>* __arg)
+    {
+        stream << "[";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, *it);
+            if (std::next(it) != __arg->end()) stream << ", ";
+        }
+        stream << "]";
+        if (sep) stream << " ";
+    }
     #endif
     // std::set<T>
     #ifdef      _GLIBCXX_SET
     template <typename T>
-    void print(bool sep, std::set<T> __arg)
+    void print(bool sep, std::set<T>& __arg)
     {
         stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
         {
             print(false, *it);
             if (std::next(it) != __arg.end()) stream << ", ";
+        }
+        stream << "}";
+        if (sep) stream << " ";
+    }
+    template <typename T>
+    void print(bool sep, std::set<T>* __arg)
+    {
+        stream << "{";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, *it);
+            if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "}";
         if (sep) stream << " ";
@@ -292,7 +366,7 @@ private:
     // std::map<T, U>
     #ifdef      _GLIBCXX_MAP
     template <typename T, typename U>
-    void print(bool sep, std::map<T, U> __arg)
+    void print(bool sep, std::map<T, U>& __arg)
     {
         stream << "{";
         for (auto it = __arg.begin(); it != __arg.end(); it++)
@@ -301,6 +375,20 @@ private:
             stream << ": ";
             print(false, it->second);
             if (std::next(it) != __arg.end()) stream << ", ";
+        }
+        stream << "}";
+        if (sep) stream << " ";
+    }
+    template <typename T, typename U>
+    void print(bool sep, std::map<T, U>* __arg)
+    {
+        stream << "{";
+        for (auto it = __arg->begin(); it != __arg->end(); it++)
+        {
+            print(false, it->first);
+            stream << ": ";
+            print(false, it->second);
+            if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "}";
         if (sep) stream << " ";
