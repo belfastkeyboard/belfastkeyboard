@@ -36,6 +36,9 @@
  *          > std::unordered_map
  *          > std::unordered_multimap
  *          > std::bitset
+ *          > std::variant
+ *          > std::optional
+ * 
  * 
  *          Supported but only default container types have been tested:
  *              > std::stack
@@ -67,19 +70,15 @@
  *      wchar_t representation
  * 
  *     
- *      ***          <---TO DO--->          ***
- * 
- *      C++17 features:
- * 
- *          std::variant<>
- *          std::optional<>
- *
+ *      ***          <---TO DO--->          *** 
  * 
  *      Further testing for reference& support.
  *      Add additional pointer* &support for containers.
  *      Support for print(&memory_address).
  * 
+ * 
  *      Support for:
+ * 
  *          > multidimensional containers
  *      
  * 
@@ -427,6 +426,27 @@ private:
     void print(bool sep, std::bitset<T>& __arg)
     {
         stream << __arg.to_string();
+        if (sep) stream << " ";
+    }    
+    #endif
+    // std::variant<T...>
+    #ifdef      _GLIBCXX_VARIANT
+    template <typename... T>
+    void print(bool sep, std::variant<T...>& __arg)
+    {
+        auto __vis = [this](const auto& __type) {
+            print(false, __type);
+        };
+        std::visit(__vis, __arg);
+        if (sep) stream << " ";
+    }
+    #endif
+    // std::optional<T>
+    #ifdef      _GLIBCXX_OPTIONAL
+    template <typename T>
+    void print(bool sep, std::optional<T>& __arg)
+    {
+        if (__arg.has_value()) {print(false, __arg.value());} else {stream << "No value!";}
         if (sep) stream << " ";
     }    
     #endif
