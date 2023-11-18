@@ -64,11 +64,9 @@
  *          > std::shared_ptr
  *          > std::weak_ptr
  * 
- *              Currently no safety checks regarding undefined pointers. 
  * 
  * 
  *      Supports references (not fully tested.)
- *      Testing for non-default stack, queue, and priority_queue containers.
  * 
  * 
  *      Partial support for pointers:
@@ -83,12 +81,24 @@
  *                  > std::list
  *                  > std::deque
  *                  > std::set
- *                  > std::map 
+ *                  > std::map
+ * 
+ *      Parameter support:
+ *          
+ *          > sep() for separation between arguments
+ *          > end() for newline or other end behaviour
+ * 
+ *          Both parameters are structs and should be called 
+ *          with their constructs like this:
+ * 
+ *              > sep(" ")
+ *              > end("\n")
  *
  * 
  *      ***          <---KNOWN ISSUES--->          ***
  *      
  *      wchar_t representation
+ *      Currently no safety checks regarding undefined pointers. 
  * 
  *     
  *      ***          <---TO DO--->          *** 
@@ -96,15 +106,7 @@
  *      Further testing for reference& support.
  *      Add additional pointer* &support for containers.
  *      Support for print(&memory_address).
- * 
- * 
- *      Parameter support:
- *          
- *          Support for Pythonic print() keyword arguments.
- *          C++ only accepts positional arguments, not keyword arguments.
- * 
- *          > sep=""
- *          > end=""
+ *      Testing for non-default stack, queue, and priority_queue containers.
  * 
  *      Improve documentation
  *      
@@ -119,36 +121,49 @@
 #include    <string>
 #include    <sstream>
 
+struct sep
+{
+    std::string __arg = " ";
+    sep(std::string __sep) : __arg(__sep) {}
+};
+
+struct end
+{
+    std::string __arg = " ";
+    end(std::string __end) : __arg(__end) {}
+};
+
 class PyPrint
 {
 private:
     std::stringstream   stream;
     std::string         output;
-
+    sep                 _sep;
+    end                 _end;
     // fundamental data types 
     template <typename T>
     void print(bool sep, T& __arg)
     {
         stream << __arg;
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     // fundamental type pointers
     template <typename T>
     void print(bool sep, T* __arg)
     {
         stream << *__arg;
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     // C style string handlers
     void print(bool sep, char __arg[])
     {
         stream << __arg;
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     void print(bool sep, const char* __arg)
     {
         stream << __arg;
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     // std::pair<T, U>
     #ifdef      _GLIBCXX_UTILITY
@@ -160,7 +175,7 @@ private:
             stream << ", ";
             print(false, __arg.second);
             stream << ")";
-            if (sep) stream << " ";
+            if (sep) stream << _sep.__arg;
         }
     #endif
     // std::tuple<T...>
@@ -171,7 +186,7 @@ private:
         stream << "(";
         print_tuple(false, __arg);
         stream << ")";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <size_t I = 0, typename... T>
     void print_tuple(bool sep, std::tuple<T...>& __arg)
@@ -195,7 +210,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T, size_t U>
     void print(bool sep, std::array<T, U>* __arg)
@@ -207,7 +222,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::vector<T>
@@ -222,7 +237,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T>
     void print(bool sep, std::vector<T>* __arg)
@@ -234,7 +249,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::list<T>
@@ -249,7 +264,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T>
     void print(bool sep, std::list<T>* __arg)
@@ -261,7 +276,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::deque<T>
@@ -276,7 +291,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T>
     void print(bool sep, std::deque<T>* __arg)
@@ -288,7 +303,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::set<T>
@@ -303,7 +318,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T>
     void print(bool sep, std::set<T>* __arg)
@@ -315,7 +330,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::multiset<T>
@@ -330,7 +345,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::unordered_set<T>
@@ -345,7 +360,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::unordered_multiset<T>
@@ -360,7 +375,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::map<T, U>
@@ -377,7 +392,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T, typename U>
     void print(bool sep, std::map<T, U>* __arg)
@@ -391,7 +406,7 @@ private:
             if (std::next(it) != __arg->end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::multimap<T, U>
@@ -408,7 +423,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::unordered_map<T, U>
@@ -425,7 +440,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::unordered_multimap<T, U>
@@ -442,7 +457,7 @@ private:
             if (std::next(it) != __arg.end()) stream << ", ";
         }
         stream << "}";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::stack<T>
@@ -458,7 +473,7 @@ private:
             if (__arg.size() > 0) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::queue<T>, std::priority_queue<T>
@@ -474,7 +489,7 @@ private:
             if (__arg.size() > 0) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     template <typename T>
     void print(bool sep, std::priority_queue<T> __arg)
@@ -487,7 +502,7 @@ private:
             if (__arg.size() > 0) stream << ", ";
         }
         stream << "]";
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::unique_ptr<T>, std::shared_ptr<T>, std::weak_ptr<T>
@@ -514,7 +529,7 @@ private:
     void print(bool sep, std::bitset<T>& __arg)
     {
         stream << __arg.to_string();
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }    
     #endif
     // std::variant<T...>
@@ -526,7 +541,7 @@ private:
             print(false, __type);
         };
         std::visit(__vis, __arg);
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }
     #endif
     // std::optional<T>
@@ -535,21 +550,23 @@ private:
     void print(bool sep, std::optional<T>& __arg)
     {
         if (__arg.has_value()) {print(false, __arg.value());} else {stream << "No value!";}
-        if (sep) stream << " ";
+        if (sep) stream << _sep.__arg;
     }    
     #endif
-
 public:
     template <typename... Arg>
-    PyPrint(Arg&&... __args)
+    void start_print(Arg&&... __args)
     {
         stream << std::boolalpha;
         (print(true, __args), ...);
         std::string output = stream.str();
-        while (output.back() == ' ') output.pop_back();
-        if (output.back() != '!' && output.back() != '.') output += '.';
-        std::cout << output << std::endl;
+        // while (output.back() == ' ' || _sep) output.pop_back();
+        size_t found = output.rfind(_sep.__arg);
+        output.erase(found, found + (_sep.__arg.size() - 1));
+        if (output.back() != '!' && output.back() != '.') output += ".";
+        std::cout << output << _end.__arg;
     }
+    PyPrint(sep __s = sep(" "), end __e = end("\n")) : _sep(__s), _end(__e) {}
 };
 
 inline void print()
@@ -559,7 +576,26 @@ inline void print()
 template <typename... T>
 void print(T&&... __args)
 {
-    PyPrint python_print(__args...);
+    PyPrint python_print;
+    python_print.start_print(__args...);
+}
+template <typename... T>
+void print(sep __sep, T&&... __args)
+{
+    PyPrint python_print(__sep, end("\n"));
+    python_print.start_print(__args...);
+}
+template <typename... T>
+void print(end __end, T&&... __args)
+{
+    PyPrint python_print(sep(" "), __end);
+    python_print.start_print(__args...);
+}
+template <typename... T>
+void print(sep __sep, end __end, T&&... __args)
+{
+    PyPrint python_print(__sep, __end);
+    python_print.start_print(__args...);
 }
 
 #endif
